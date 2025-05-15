@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un étudiant</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --info: #4895ef;
+      --warning: #f72585;
+      --danger: #e63946;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .form-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-title {
+      font-weight: 600;
+      margin: 0;
+      color: var(--dark);
+      font-size: 1.6rem;
+    }
+
+    .form-icon {
+      background-color: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      display: block;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #dee2e6;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+
+    .is-invalid {
+      border-color: var(--danger) !important;
+    }
+
+    .invalid-feedback {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-actions {
+      display: flex;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .btn-secondary {
+      background-color: #e9ecef;
+      border-color: #e9ecef;
+      color: #495057;
+    }
+
+    .btn-secondary:hover {
+      background-color: #dee2e6;
+      border-color: #dee2e6;
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      <div class="form-icon">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <a routerLink="/admin/students">← Retour à la liste</a>
+      <h2 class="form-title">Ajouter un étudiant</h2>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="error" class="error-container">
+      <i class="fas fa-exclamation-circle error-icon"></i>
+      <p class="error-message">{{ error }}</p>
+    </div>
+
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <!-- Section Informations Personnelles -->
+      <div class="form-section">
+        <h3 class="form-section-title">
+          <i class="fas fa-user section-icon"></i>Informations personnelles
+        </h3>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="name" class="form-label">Nom complet</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                placeholder="Entrez le nom complet"
+                [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+              />
+              <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                <div *ngIf="f['name'].errors['required']">
+                  <i class="fas fa-exclamation-circle me-1"></i>Le nom est requis
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="email" class="form-label">Adresse email</label>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                class="form-control"
+                placeholder="exemple@email.com"
+                [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+              />
+              <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                <div *ngIf="f['email'].errors['required']">
+                  <i class="fas fa-exclamation-circle me-1"></i>L'email est requis
+                </div>
+                <div *ngIf="f['email'].errors['email']">
+                  <i class="fas fa-exclamation-circle me-1"></i>Veuillez entrer un email valide
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+  <div class="form-group">
+    <label for="password" class="form-label">Mot de passe</label>
+    <input
+      type="password"
+      id="password"
+      formControlName="password"
+      class="form-control"
+      placeholder="Entrez un mot de passe"
+      [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+    />
+    <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+      <div *ngIf="f['password'].errors['required']">
+        <i class="fas fa-exclamation-circle me-1"></i>Le mot de passe est requis
+      </div>
+      <div *ngIf="f['password'].errors['minlength']">
+        <i class="fas fa-exclamation-circle me-1"></i>Le mot de passe doit contenir au moins 6 caractères
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </div>
+
+      <!-- Section Informations supplémentaires -->
+      <div class="form-section">
+        <h3 class="form-section-title">
+          <i class="fas fa-info-circle section-icon"></i>Informations supplémentaires
+        </h3>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="age" class="form-label">Âge</label>
+              <input
+                type="number"
+                id="age"
+                formControlName="age"
+                class="form-control"
+                placeholder="Entrez l'âge"
+                [ngClass]="{ 'is-invalid': submitted && f['age'].errors }"
+              />
+              <div *ngIf="submitted && f['age'].errors" class="invalid-feedback">
+                <div *ngIf="f['age'].errors['required']">
+                  <i class="fas fa-exclamation-circle me-1"></i>L'âge est requis
+                </div>
+                <div *ngIf="f['age'].errors['min']">
+                  <i class="fas fa-exclamation-circle me-1"></i>L'âge doit être supérieur ou égal à 16
+                </div>
+                <div *ngIf="f['age'].errors['max']">
+                  <i class="fas fa-exclamation-circle me-1"></i>L'âge ne peut pas dépasser 100 ans
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+  <div class="form-group">
+    <label for="classe" class="form-label">Classe</label>
+    <input
+      type="text"
+      id="classe"
+      formControlName="classe"
+      class="form-control"
+      placeholder="Ex: 2ème année"
+      [ngClass]="{ 'is-invalid': submitted && f['classe'].errors }"
+    />
+    <div *ngIf="submitted && f['classe'].errors" class="invalid-feedback">
+      <i class="fas fa-exclamation-circle me-1"></i>La classe est requise
+    </div>
+  </div>
+</div>
+
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="department_id" class="form-label">Département</label>
+  <select
+    id="department_id"
+    formControlName="department_id"
+    class="form-select"
+    [class.is-invalid]="hasError('department_id', 'required')"
+  >
+    <option value="">-- Sélectionner un département --</option>
+    <option *ngFor="let dept of departments" [value]="dept.id">
+      {{ dept.name }}
+    </option>
+  </select>
+  <div *ngIf="hasError('department_id', 'required')" class="invalid-feedback">
+    Le département est requis.
+  </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Actions -->
+      <div class="form-actions mt-3">
+    <button type="submit" class="btn btn-primary" [disabled]="loading || studentForm.invalid">
+      <i class="fas fa-check me-2"></i>
+      <span *ngIf="!loading">Enregistrer</span>
+      <span *ngIf="loading">Chargement...</span>
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="onReset()" [disabled]="loading">
+      <i class="fas fa-undo me-2"></i>Réinitialiser
+    </button>
+  </div>
+</form>
+
+</div> <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script> </body> </html>

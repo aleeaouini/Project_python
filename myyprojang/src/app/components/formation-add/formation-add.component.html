@@ -1,0 +1,23 @@
+<h2>Ajouter une formation</h2>
+<form (ngSubmit)="onSubmit()" #formationForm="ngForm">
+  <label for="name">Nom de la formation:</label>
+  <input type="text" id="name" name="name" required [(ngModel)]="formation.name">
+
+  <label for="department">Département:</label>
+  <select id="department" name="department_id" required [(ngModel)]="formation.department_id">
+    <option *ngFor="let dep of departments" [value]="dep.id">{{ dep.name }}</option>
+  </select>
+
+  <button type="submit">Ajouter</button>
+</form>
+
+<div *ngIf="message">{{ message }}</div>
+
+<h3>Liste des formations existantes</h3>
+<ul>
+  <li *ngFor="let f of formations">
+    {{ f.name }} (Département : {{ getDepartmentName(f.department_id) }})
+  </li>
+</ul>
+
+
